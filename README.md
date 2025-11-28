@@ -1,4 +1,4 @@
-# Good TypeScript Library Template
+# Good TypeScript Libraries Template
 
 An opinionated production-ready TypeScript **monorepo** template with automated builds, testing, and releases powered by Nx.
 
@@ -40,16 +40,6 @@ And believe me. **It is good.**
 - **pnpm** - Fast package management with Corepack
 - **GitHub Actions** - CI/CD pipeline (validation, versioning, publishing)
 
-## Repository layout
-```
-packages/
-  core/
-    src/            # library source
-    test/           # vitest tests
-    rollup.config.js
-    project.json    # Nx targets
-```
-Shared config: `tsconfig.base.json`, `vitest.config.ts`, `biome.json`, `nx.json`, `pnpm-workspace.yaml`.
 
 ## Setup
 

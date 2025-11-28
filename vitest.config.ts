@@ -1,4 +1,4 @@
-import { defineWorkspace } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
 
 const sharedCoverage = {
   reporter: ['text', 'html', 'lcov', 'json-summary', 'json'],
@@ -14,30 +14,34 @@ const sharedCoverage = {
 
 const sharedTestOptions = {
   globals: true,
-  environment: 'node',
+  environment: 'node' as const,
 }
 
-export default defineWorkspace([
-  {
-    test: {
-      ...sharedTestOptions,
-      name: 'core',
-      root: './packages/core',
-      include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-      exclude: ['node_modules', 'dist'],
-      typecheck: {
-        enabled: true,
-        tsconfig: './packages/core/tsconfig.json',
-      },
-      coverage: {
-        ...sharedCoverage,
-        reportsDirectory: './coverage',
-      },
+export default defineConfig({
+  test: {
+    coverage: {
+      ...sharedCoverage,
     },
-    resolve: {
-      alias: {
-        '@good-typescript-libraries/core': new URL('./packages/core/src', import.meta.url).pathname,
+    projects: [
+      {
+        test: {
+          ...sharedTestOptions,
+          name: 'core',
+          root: './packages/core',
+          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+          exclude: ['node_modules', 'dist'],
+          typecheck: {
+            enabled: true,
+            tsconfig: './packages/core/tsconfig.json',
+          },
+        },
+        resolve: {
+          alias: {
+            '@good-typescript-libraries/core': new URL('./packages/core/src', import.meta.url)
+              .pathname,
+          },
+        },
       },
-    },
+    ],
   },
-])
+})

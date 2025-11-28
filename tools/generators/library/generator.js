@@ -58,40 +58,36 @@ function updateVitestConfig(tree, name, npmScope) {
     return
   }
 
-  const newWorkspaceEntry = `  {
-    test: {
-      ...sharedTestOptions,
-      name: '${name}',
-      root: './packages/${name}',
-      include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-      exclude: ['node_modules', 'dist'],
-      typecheck: {
-        enabled: true,
-        tsconfig: './packages/${name}/tsconfig.json',
-      },
-      coverage: {
-        ...sharedCoverage,
-        reportsDirectory: './coverage',
-      },
-    },
-    resolve: {
-      alias: {
-        '@${npmScope}/${name}': new URL('./packages/${name}/src', import.meta.url).pathname,
-      },
-    },
-  },`
+  const newProjectEntry = `      {
+        test: {
+          ...sharedTestOptions,
+          name: '${name}',
+          root: './packages/${name}',
+          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+          exclude: ['node_modules', 'dist'],
+          typecheck: {
+            enabled: true,
+            tsconfig: './packages/${name}/tsconfig.json',
+          },
+        },
+        resolve: {
+          alias: {
+            '@${npmScope}/${name}': new URL('./packages/${name}/src', import.meta.url).pathname,
+          },
+        },
+      },`
 
-  const closingBracketIndex = content.lastIndexOf('])')
-  if (closingBracketIndex === -1) {
-    console.warn('Could not find closing bracket in vitest.config.ts')
+  const projectsArrayEnd = content.lastIndexOf('],')
+  if (projectsArrayEnd === -1) {
+    console.warn('Could not find projects array in vitest.config.ts')
     return
   }
 
   const updatedContent =
-    content.slice(0, closingBracketIndex) +
-    newWorkspaceEntry +
-    '\n' +
-    content.slice(closingBracketIndex)
+    content.slice(0, projectsArrayEnd) +
+    newProjectEntry +
+    '\n    ' +
+    content.slice(projectsArrayEnd)
 
   tree.write(vitestConfigPath, updatedContent)
 }
