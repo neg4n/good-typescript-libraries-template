@@ -1,0 +1,60 @@
+name: Release Publish
+
+on:
+  push:
+    tags:
+      - "*@*"
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Derive project from tag
+        id: meta
+        run: |
+          ref="${GITHUB_REF_NAME}"
+          if [[ "$ref" == v* ]]; then
+            echo "project=*" >> $GITHUB_OUTPUT
+          else
+            echo "project=${ref%@*}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build tagged project
+        run: |
+          if [ "${{ steps.meta.outputs.project }}" = "*" ]; then
+            pnpm build
+          else
+            pnpm exec nx run "${{ steps.meta.outputs.project }}:build"
+          fi
+
+      - name: Publish affected package(s)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: pnpm exec nx release publish --projects "${{ steps.meta.outputs.project }}" --yes

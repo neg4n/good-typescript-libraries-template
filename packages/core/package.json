@@ -1,0 +1,41 @@
+{
+  "name": "@good-typescript-libraries/core",
+  "version": "0.1.0",
+  "description": "Core utilities for the Good TypeScript monorepo template",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.esm.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "test": "vitest --config ../../vitest.config.ts --project core",
+    "lint": "biome check .",
+    "typecheck": "tsc --project tsconfig.build.json --noEmit",
+    "attw": "attw --pack ."
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT",
+  "author": {
+    "email": "neg4n@icloud.com",
+    "name": "neg4n",
+    "url": "https://github.com/neg4n"
+  },
+  "packageManager": "pnpm@10.8.0"
+}
