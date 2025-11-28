@@ -8,15 +8,18 @@ And believe me. **It is good.**
 
 ## Features
 
-- 🧭 **Nx-managed Monorepo** – multiple libraries under `packages/*` with shared tooling
+- 🧭 **Nx-powered Monorepo** – multiple libraries under `packages/*` with intelligent task orchestration
+    - ⚡ **Affected-only CI** – lint, typecheck, test, build run only for changed packages
+    - 💾 **Local & remote caching** – skip redundant work across runs
+    - 🚀 **Independent releases** – per-package versioning with conventional commits
+    - 📊 **Project graph awareness** – understands package dependencies
 - 📦 **Dual Package Support** – Rollup outputs CommonJS and ESM builds per package
 - 🛡️ **Type Safety** – Extremely strict TypeScript configuration (shared `tsconfig.base.json`)
 - 🔐 **Always up-to-date deps** – [Renovate](https://github.com/renovatebot/renovate) bot for CVE-aware automatic dependency updates
 - ✅ **Build Validation** – Uses `@arethetypeswrong/cli` to check package exports
-- 🧪 **Automated Testing** – Vitest workspace with per-package projects and coverage reporting
+- 🧪 **Automated Testing** – Vitest workspace with per-package coverage PR comments
 - 🎨 **Code Quality** – Biome linting/formatting with pre-commit hooks
-- 🚀 **Automated Releases** – Nx Release (conventional commits, per-package tags & changelogs)
-- ⚙️ **CI/CD Pipeline** – GitHub Actions for testing, versioning, and publishing
+- ⚙️ **CI/CD Pipeline** – GitHub Actions with workflow chaining (CI → Version → Publish)
 - 🔧 **One-Click Setup** – Automated repository configuration with `init.sh` script
     - 🏛️ **Repository rulesets** - Branch protection with linear history and PR reviews
     - 🚷 **Feature cleanup** - Disable wikis, projects, squash/merge commits
@@ -136,7 +139,17 @@ pnpm exec nx g @nx/js:lib new-lib \
 > [!NOTE]
 > The `importPath` should be equivalent to your scope name.
 
-Then export from `packages/new-lib/src/index.ts` and add tests under `packages/new-lib/test`.
+Then:
+1. Export from `packages/new-lib/src/index.ts` and add tests under `packages/new-lib/test`.
+2. Add a coverage report step in `.github/workflows/ci.yml` for PR comments:
+```yaml
+- name: Report Coverage (new-lib)
+  if: always()
+  uses: davelosert/vitest-coverage-report-action@v2
+  with:
+    json-summary-path: packages/new-lib/coverage/coverage-summary.json
+    name: new-lib
+```
 
 ## Changing the npm scope
 The default scope is `@good-typescript-libraries`. To rename it (e.g. to `@my-libraries`), update these places:
@@ -149,14 +162,14 @@ After those edits, run `pnpm install`, then `pnpm lint && pnpm test && pnpm buil
 
 ## Release model (Nx Release)
 - Conventional commits determine bumps; packages release **independently**.
-- Version workflow (push to `main`) runs `nx release version --yes` to update versions/changelogs and create tags (`{projectName}@{version}`).
+- Version workflow (triggered after CI succeeds on `main`) runs `nx release version --yes` to update versions/changelogs and create tags (`{projectName}@{version}`).
 - Publish workflow (tag push) runs `nx release publish --projects <name>` with npm provenance.
 - Required secret: `NPM_TOKEN`; optional `ACTIONS_BRANCH_PROTECTION_BYPASS` if your repo blocks CI pushes.
 
 ## CI/CD (GitHub Actions)
-- `CI` (push/PR): lint → typecheck → tests + coverage → build on Node 20 & 22.
-- `Release Version` (push to `main`): reruns checks, bumps versions/changelogs, creates tags, pushes back.
-- `Release Publish` (tag): rebuilds tagged package(s) and publishes to npm with provenance.
+- `CI` (push/PR): runs `nx affected` for lint → typecheck → tests + coverage → build on Node 20 & 22.
+- `Release Version` (after CI succeeds on `main`): bumps versions/changelogs, creates tags, pushes back.
+- `Release Publish` (tag push): rebuilds tagged package(s) and publishes to npm with provenance.
 
 ## Renovate
 

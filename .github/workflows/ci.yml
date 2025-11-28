@@ -24,8 +24,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -36,20 +34,30 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Derive base ref
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ref=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "ref=origin/main~1" >> $GITHUB_OUTPUT
+          fi
+
       - name: Lint
-        run: pnpm lint
+        run: pnpm exec nx affected -t lint --base=${{ steps.base.outputs.ref }} --head=HEAD
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: pnpm exec nx affected -t typecheck --base=${{ steps.base.outputs.ref }} --head=HEAD
 
       - name: Test with coverage
-        run: pnpm test:coverage
+        run: pnpm exec nx affected -t test --base=${{ steps.base.outputs.ref }} --head=HEAD -- --coverage
 
       - name: Build
-        run: pnpm build
+        run: pnpm exec nx affected -t build --base=${{ steps.base.outputs.ref }} --head=HEAD
 
-      - name: Report Coverage
+      - name: Report Coverage (core)
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-path: packages/core/coverage/coverage-summary.json
+          name: core
