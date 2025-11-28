@@ -129,27 +129,43 @@ gh secret set ACTIONS_BRANCH_PROTECTION_BYPASS --body "your-pat-token-here"
 Per-package targets are also available, e.g. `pnpm nx run core:build`.
 
 ## Adding a new package
+
+Use the built-in generator to scaffold a new package with all the template's features:
+
 ```bash
-pnpm exec nx g @nx/js:lib new-lib \
-  --directory=packages/new-lib \
-  --publishable --importPath=@good-typescript-libraries/new-lib \
-  --bundler=rollup
+pnpm nx g @good-typescript-libraries/tools:library --name=my-utils
 ```
 
-> [!NOTE]
-> The `importPath` should be equivalent to your scope name.
+### What the generator does
 
-Then:
-1. Export from `packages/new-lib/src/index.ts` and add tests under `packages/new-lib/test`.
-2. Add a coverage report step in `.github/workflows/ci.yml` for PR comments:
-```yaml
-- name: Report Coverage (new-lib)
-  if: always()
-  uses: davelosert/vitest-coverage-report-action@v2
-  with:
-    json-summary-path: packages/new-lib/coverage/coverage-summary.json
-    name: new-lib
+1. **Creates package** at `packages/<name>/` with:
+   - `project.json` with Nx targets (build, lint, test, typecheck, attw)
+   - `package.json` with dual CJS/ESM exports and publishConfig
+   - `rollup.config.js` producing ESM, CJS, minified ESM, and bundled types
+   - `tsconfig.json` and `tsconfig.build.json`
+   - Placeholder `src/index.ts` and `test/index.test.ts`
+
+2. **Updates `vitest.config.ts`** — adds workspace entry with test config and alias
+
+3. **Updates CI workflow** — adds coverage report step to `.github/workflows/ci.yml`
+
+### Generator options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `name` | string | — | Package name (required) |
+| `--description` | string | `""` | Package description for package.json |
+| `--skipCoverage` | boolean | `false` | Skip adding coverage report to CI |
+
+### Examples
+
+```bash
+pnpm nx g @good-typescript-libraries/tools:library --name=utils --description="Utility functions"
+
+pnpm nx g @good-typescript-libraries/tools:library --name=internal-tools --skipCoverage
 ```
+
+After generating, add your exports to `packages/<name>/src/index.ts` and run `pnpm nx build <name>` to verify.
 
 ## Changing the npm scope
 The default scope is `@good-typescript-libraries`. To rename it (e.g. to `@my-libraries`), update these places:
@@ -157,7 +173,15 @@ The default scope is `@good-typescript-libraries`. To rename it (e.g. to `@my-li
 2. **tsconfig.base.json** – change the path alias to `"@my-libraries/*": ["packages/*/src/index.ts"]`.
 3. **Package names/import paths** – in each `packages/*/package.json` update `"name"` and `importPath` (if present) to the new scope; adjust any imports in code/tests (e.g. `import {...} from '@my-libraries/core'`).
 4. **Vitest aliases** – in `vitest.config.ts` update the alias map to the new scope.
-5. **Docs & examples** – replace `@my-libraries/` occurrences in README/CONTRIBUTING and commands.
+5. **Tools package** – in `tools/package.json` update `"name"` to the new scope (e.g. `@my-libraries/tools`).
+6. **Docs & examples** – replace `@my-libraries/` occurrences in README/CONTRIBUTING and commands.
+
+> [!NOTE]
+> After changing the scope, generator commands will also change. For example:
+> ```bash
+> pnpm nx g @my-libraries/tools:library --name=utils
+> ```
+
 After those edits, run `pnpm install`, then `pnpm lint && pnpm test && pnpm build` to ensure everything resolves correctly.
 
 ## Release model (Nx Release)

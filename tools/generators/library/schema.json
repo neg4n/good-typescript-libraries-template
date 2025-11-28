@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "id": "library",
+  "title": "Create Library",
+  "description": "Create a new library package with Rollup, Vitest, and CI integration",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Package name (e.g., utils)",
+      "x-prompt": "What name would you like to use for the library?"
+    },
+    "description": {
+      "type": "string",
+      "description": "Package description for package.json",
+      "default": ""
+    },
+    "skipCoverage": {
+      "type": "boolean",
+      "description": "Skip adding coverage report step to CI workflow",
+      "default": false
+    }
+  },
+  "required": ["name"]
+}
+

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "good-ts",
+  "npmScope": "good-typescript-libraries",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
@@ -25,7 +25,7 @@
       "{projectRoot}/**/*",
       "!{projectRoot}/dist/**",
       "!{projectRoot}/coverage/**",
-      "!**/node_modules/**"
+      "!{projectRoot}/node_modules/**"
     ],
     "production": [
       "default",

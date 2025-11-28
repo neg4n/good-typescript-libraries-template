@@ -1,0 +1,13 @@
+import { hello } from '@<%= npmScope %>/<%= name %>'
+import { describe, expect, it } from 'vitest'
+
+describe('hello', () => {
+  it('should return a greeting message', () => {
+    expect(hello('World')).toBe('Hello, World!')
+  })
+
+  it('should handle empty string', () => {
+    expect(hello('')).toBe('Hello, !')
+  })
+})
+

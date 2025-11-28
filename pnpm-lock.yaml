@@ -68,6 +68,8 @@ importers:
 
   packages/core: {}
 
+  tools: {}
+
 packages:
 
   '@ampproject/remapping@2.3.0':

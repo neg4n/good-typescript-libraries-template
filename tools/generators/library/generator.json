@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "name": "library",
+  "factory": "./generator.js",
+  "schema": "./schema.json",
+  "description": "Create a new library package with Rollup, Vitest, and CI integration"
+}
+
