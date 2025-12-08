@@ -4,3 +4,4 @@ export interface LibraryGeneratorSchema {
   skipCoverage?: boolean
 }
 
+
