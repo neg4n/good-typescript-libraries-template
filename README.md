@@ -4,11 +4,13 @@ An opinionated production-ready TypeScript **monorepo** template with automated 
 
 And believe me. **It is good.**
 
+> [!IMPORTANT]
+> Looking for a simpler, non-monorepo template without **nx** but same features?  
+> [Check out `good-typescript-library-template`!](https://github.com/neg4n/good-typescript-library-template)
+
 <img width="380" src="https://github.com/user-attachments/assets/e3ecf54c-13c4-4baa-a253-d2861d4bf4e9" />
 
-> [!INFO]
-> Looking for a simpler, non-monorepo template without **nx** but same features?
-> [Check out `good-typescript-library-template`!](https://github.com/neg4n/good-typescript-library-template)
+
 
 ## Features
 
