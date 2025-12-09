@@ -27,7 +27,7 @@ export default defineConfig({
         test: {
           ...sharedTestOptions,
           name: 'core',
-          root: './packages/core',
+          root: new URL('./packages/core', import.meta.url).pathname,
           include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
           exclude: ['node_modules', 'dist'],
           typecheck: {
