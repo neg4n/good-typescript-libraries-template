@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "husky",
     "format": "biome format --write .",
-    "format:check": "biome format --check .",
+    "format:check": "biome format .",
     "lint": "nx run-many -t lint --all",
     "lint:fix": "nx run-many -t lint --all -- --write",
     "test": "nx run-many -t test --all",
@@ -41,7 +41,7 @@
   "packageManager": "pnpm@10.8.0",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@biomejs/biome": "2.0.4",
+    "@biomejs/biome": "2.3.8",
     "@nx/js": "22.2.1",
     "@nx/workspace": "22.2.1",
     "@rollup/plugin-commonjs": "^28.0.6",
