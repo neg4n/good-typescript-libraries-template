@@ -48,6 +48,8 @@
       "commit": true,
       "tag": true
     },
-    "releaseTagPattern": "{projectName}@{version}"
+    "releaseTag": {
+      "pattern": "{projectName}@{version}"
+    }
   }
 }
