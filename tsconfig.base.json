@@ -33,7 +33,7 @@
     "allowImportingTsExtensions": false,
     "allowArbitraryExtensions": false,
     "preserveConstEnums": true,
-    "preserveSymlinks": true,
+    "preserveSymlinks": false,
     "paths": {
       "@good-typescript-libraries/*": ["packages/*/src/index.ts"]
     }
