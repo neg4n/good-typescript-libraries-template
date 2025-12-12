@@ -4,22 +4,23 @@ import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 import { defineConfig } from 'rollup'
 import dts from 'rollup-plugin-dts'
+import { nxAwarePath } from '../../setup-utils.js'
 
 const external = id => !id.startsWith('.') && !id.startsWith('/') && !id.includes('src/')
 
 export default defineConfig([
   // ESM and CJS builds
   {
-    input: 'src/index.ts',
+    input: nxAwarePath('./src/index.ts', import.meta.url),
     external,
     output: [
       {
-        file: 'dist/index.esm.js',
+        file: nxAwarePath('./dist/index.esm.js', import.meta.url),
         format: 'esm',
         sourcemap: true,
       },
       {
-        file: 'dist/index.cjs',
+        file: nxAwarePath('./dist/index.cjs', import.meta.url),
         format: 'cjs',
         sourcemap: true,
         exports: 'auto',
@@ -31,7 +32,7 @@ export default defineConfig([
       }),
       commonjs(),
       typescript({
-        tsconfig: './tsconfig.build.json',
+        tsconfig: nxAwarePath('./tsconfig.build.json', import.meta.url),
         declaration: false,
         declarationMap: false,
       }),
@@ -39,10 +40,10 @@ export default defineConfig([
   },
   // Minified ESM build
   {
-    input: 'src/index.ts',
+    input: nxAwarePath('./src/index.ts', import.meta.url),
     external,
     output: {
-      file: 'dist/index.esm.min.js',
+      file: nxAwarePath('./dist/index.esm.min.js', import.meta.url),
       format: 'esm',
       sourcemap: true,
     },
@@ -52,7 +53,7 @@ export default defineConfig([
       }),
       commonjs(),
       typescript({
-        tsconfig: './tsconfig.build.json',
+        tsconfig: nxAwarePath('./tsconfig.build.json', import.meta.url),
         declaration: false,
         declarationMap: false,
       }),
@@ -72,15 +73,15 @@ export default defineConfig([
   },
   // Type definitions
   {
-    input: 'src/index.ts',
+    input: nxAwarePath('./src/index.ts', import.meta.url),
     external,
     output: {
-      file: 'dist/index.d.ts',
+      file: nxAwarePath('./dist/index.d.ts', import.meta.url),
       format: 'esm',
     },
     plugins: [
       dts({
-        tsconfig: './tsconfig.build.json',
+        tsconfig: nxAwarePath('./tsconfig.build.json', import.meta.url),
       }),
     ],
   },

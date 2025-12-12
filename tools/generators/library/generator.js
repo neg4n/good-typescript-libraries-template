@@ -58,16 +58,16 @@ function updateVitestConfig(tree, name, npmScope) {
     return
   }
 
-  const newProjectEntry = `      {
-        test: {
-          ...sharedTestOptions,
-          name: '${name}',
-          root: './packages/${name}',
-          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-          exclude: ['node_modules', 'dist'],
-          typecheck: {
-            enabled: true,
-            tsconfig: './packages/${name}/tsconfig.json',
+	  const newProjectEntry = `      {
+	        test: {
+	          ...sharedTestOptions,
+	          name: '${name}',
+	          root: new URL('./packages/${name}', import.meta.url).pathname,
+	          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+	          exclude: ['node_modules', 'dist'],
+	          typecheck: {
+	            enabled: true,
+	            tsconfig: './packages/${name}/tsconfig.json',
           },
         },
         resolve: {
@@ -113,4 +113,3 @@ function updateCiWorkflow(tree, name) {
 
   tree.write(ciWorkflowPath, updatedContent)
 }
-
