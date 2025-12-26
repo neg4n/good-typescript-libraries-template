@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config'
+import { nxAwarePath } from './setup-utils.js'
 
 const sharedCoverage = {
   reporter: ['text', 'html', 'lcov', 'json-summary', 'json'],

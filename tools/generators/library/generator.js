@@ -51,28 +51,41 @@ module.exports = async function libraryGenerator(tree, options) {
 
 function updateVitestConfig(tree, name, npmScope) {
   const vitestConfigPath = 'vitest.config.ts'
-  const content = tree.read(vitestConfigPath, 'utf-8')
+  let content = tree.read(vitestConfigPath, 'utf-8')
 
   if (!content) {
     console.warn('Could not read vitest.config.ts')
     return
   }
 
-	  const newProjectEntry = `      {
-	        test: {
-	          ...sharedTestOptions,
-	          name: '${name}',
-	          root: new URL('./packages/${name}', import.meta.url).pathname,
-	          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-	          exclude: ['node_modules', 'dist'],
-	          typecheck: {
-	            enabled: true,
-	            tsconfig: './packages/${name}/tsconfig.json',
+  const nxAwarePathImport = "import { nxAwarePath } from './setup-utils.js'"
+  if (!content.includes(nxAwarePathImport)) {
+    const importVitestIndex = content.indexOf("import { defineConfig } from 'vitest/config'")
+    if (importVitestIndex !== -1) {
+      const nextLineIndex = content.indexOf('\n', importVitestIndex)
+      content =
+        content.slice(0, nextLineIndex + 1) +
+        nxAwarePathImport +
+        '\n' +
+        content.slice(nextLineIndex + 1)
+    }
+  }
+
+  const newProjectEntry = `      {
+        test: {
+          ...sharedTestOptions,
+          name: '${name}',
+          root: nxAwarePath('./packages/${name}', import.meta.url),
+          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+          exclude: ['node_modules', 'dist'],
+          typecheck: {
+            enabled: true,
+            tsconfig: './packages/${name}/tsconfig.json',
           },
         },
         resolve: {
           alias: {
-            '@${npmScope}/${name}': new URL('./packages/${name}/src', import.meta.url).pathname,
+            '@${npmScope}/${name}': nxAwarePath('./packages/${name}/src', import.meta.url),
           },
         },
       },`
